@@ -2,20 +2,121 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
     <FrameLayout
+        android:padding="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        
-        <Button
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:iconTint="@color/deep_charcoal"
-            android:drawableStart="@drawable/ic_back"
-            android:gravity="center"
-            android:backgroundTint="@color/white"
-            android:padding="4dp"/>
 
-    
+        <Button
+            android:id="@+id/back_button"
+            android:layout_width="@dimen/button_size_settings"
+            android:layout_height="@dimen/button_size_settings"
+            android:drawableStart="@drawable/ic_back"
+            android:backgroundTint="@color/white"
+            app:icon="@drawable/ic_back"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconTint="@color/deep_charcoal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:paddingStart="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="10dp"
+            android:text="@string/settings"
+            android:textColor="@color/deep_charcoal"
+            android:textSize="@dimen/text_size_main"/>
     </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:paddingVertical="@dimen/padding_vertical_settings"
+        android:paddingStart="@dimen/padding_start_settings"
+        android:paddingEnd="6dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/dark_theme"
+            android:textColor="@color/deep_charcoal"
+            android:textSize="@dimen/text_size_settings" />
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/padding_vertical_settings"
+        android:paddingStart="@dimen/padding_start_settings"
+        android:paddingEnd="@dimen/padding_end_settings">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/share_the_app"
+            android:textSize="@dimen/text_size_settings"
+            android:textColor="@color/deep_charcoal"/>
+
+        <ImageView
+            android:layout_width="@dimen/image_size_settings"
+            android:layout_height="@dimen/image_size_settings"
+            android:layout_gravity="end"
+            android:src="@drawable/ic_share"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/padding_vertical_settings"
+        android:paddingStart="@dimen/padding_start_settings"
+        android:paddingEnd="@dimen/padding_end_settings">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/write_to_support"
+            android:textSize="@dimen/text_size_settings"
+            android:textColor="@color/deep_charcoal"/>
+
+        <ImageView
+            android:layout_width="@dimen/image_size_settings"
+            android:layout_height="@dimen/image_size_settings"
+            android:layout_gravity="end"
+            android:src="@drawable/ic_support"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/padding_vertical_settings"
+        android:paddingStart="@dimen/padding_start_settings"
+        android:paddingEnd="@dimen/padding_end_settings">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/user_agreement"
+            android:textSize="@dimen/text_size_settings"
+            android:textColor="@color/deep_charcoal"/>
+
+        <ImageView
+            android:layout_width="@dimen/image_size_settings"
+            android:layout_height="@dimen/image_size_settings"
+            android:layout_gravity="end"
+            android:src="@drawable/ic_arrow_forward"/>
+    </FrameLayout>
+
+
 </LinearLayout>

@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="corner_radius">16dp</dimen>
-    <dimen name="text_size">22sp</dimen>
+    <dimen name="text_size_main">22sp</dimen>
     <dimen name="icon_padding">10dp</dimen>
     <dimen name="padding_horizontal">16dp</dimen>
+    <dimen name="text_size_settings">16sp</dimen>
+    <dimen name="padding_vertical_settings">21dp</dimen>
+    <dimen name="padding_start_settings">16dp</dimen>
+    <dimen name="padding_end_settings">12dp</dimen>
+    <dimen name="image_size_settings">24dp</dimen>
+    <dimen name="button_size_settings">48dp</dimen>
 </resources>
