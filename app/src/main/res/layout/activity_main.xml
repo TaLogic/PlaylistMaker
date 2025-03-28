@@ -70,6 +70,5 @@
             app:iconPadding="@dimen/icon_padding"
             app:iconTint="@color/deep_charcoal"
             app:cornerRadius="@dimen/corner_radius" />
-
     </LinearLayout>
 </LinearLayout>
