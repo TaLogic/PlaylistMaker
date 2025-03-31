@@ -29,14 +29,14 @@
             android:layout_weight="1"
             android:backgroundTint="@color/white"
             android:text="@string/button_search"
+            android:textAllCaps="false"
             android:textColor="@color/deep_charcoal"
             android:textSize="@dimen/text_size_main"
-            android:textAllCaps="false"
+            app:cornerRadius="@dimen/corner_radius"
             app:icon="@drawable/ic_search"
             app:iconGravity="textStart"
             app:iconPadding="@dimen/icon_padding"
-            app:iconTint="@color/deep_charcoal"
-            app:cornerRadius="@dimen/corner_radius" />
+            app:iconTint="@color/deep_charcoal" />
 
         <Button
             android:id="@+id/media_library_button"
@@ -46,14 +46,14 @@
             android:layout_weight="1"
             android:backgroundTint="@color/white"
             android:text="@string/button_media_library"
+            android:textAllCaps="false"
             android:textColor="@color/deep_charcoal"
             android:textSize="@dimen/text_size_main"
-            android:textAllCaps="false"
+            app:cornerRadius="@dimen/corner_radius"
             app:icon="@drawable/ic_media_library"
             app:iconGravity="textStart"
             app:iconPadding="@dimen/icon_padding"
-            app:iconTint="@color/deep_charcoal"
-            app:cornerRadius="@dimen/corner_radius" />
+            app:iconTint="@color/deep_charcoal" />
 
         <Button
             android:id="@+id/settings_button"
@@ -62,13 +62,13 @@
             android:layout_weight="1"
             android:backgroundTint="@color/white"
             android:text="@string/button_settings"
+            android:textAllCaps="false"
             android:textColor="@color/deep_charcoal"
             android:textSize="@dimen/text_size_main"
-            android:textAllCaps="false"
+            app:cornerRadius="@dimen/corner_radius"
             app:icon="@drawable/ic_settings"
             app:iconGravity="textStart"
             app:iconPadding="@dimen/icon_padding"
-            app:iconTint="@color/deep_charcoal"
-            app:cornerRadius="@dimen/corner_radius" />
+            app:iconTint="@color/deep_charcoal" />
     </LinearLayout>
 </LinearLayout>
