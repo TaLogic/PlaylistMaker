@@ -20,10 +20,13 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:paddingHorizontal="@dimen/padding_horizontal"
-        android:paddingVertical="@dimen/padding_vertical_settings"
+        android:paddingStart="@dimen/padding_horizontal"
+        android:paddingEnd="@dimen/padding_end_settings"
         android:text="@string/dark_theme"
         android:textSize="@dimen/text_size_settings"
-        android:textColor="@color/deep_charcoal"/>
+        android:textColor="@color/deep_charcoal"
+        app:thumbTint="@color/switch_thumb_color"
+        app:trackTint="@color/switch_track_color"/>
 
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
