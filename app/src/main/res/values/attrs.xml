@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorOnPrimaryVariant" format="color"/>
+    <attr name="colorSearchBackground" format="color"/>
+    <attr name="colorSearchHint" format="color"/>
+    <attr name="colorSearchIcon" format="color"/>
+    <attr name="colorSearchText" format="color"/>
+
+</resources>
