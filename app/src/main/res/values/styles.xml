@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ToolbarSettings">
+        <item name="android:textColor">@color/deep_charcoal</item>
+        <item name="android:textSize">@dimen/text_size_main</item>
+    </style>
+</resources>
