@@ -1,10 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity">
+    tools:context=".SearchActivity"
+    android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="@string/search"
+        app:titleTextAppearance="@style/YS.Text.Medium.22"
+        app:titleTextColor="?colorOnPrimary" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_horizontal">
+
+        <EditText
+            android:id="@+id/inputEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/search"
+            android:maxLines="1"
+            android:inputType="text"
+            android:drawableStart="@drawable/ic_search_16x16"
+            android:drawablePadding="8dp"
+            android:textColor="?attr/colorSearchText"
+            android:textColorHint="?attr/colorSearchHint"
+            android:background="@drawable/bg_edittext"
+            android:textCursorDrawable="@drawable/cursor"/>
+
+        <ImageView
+            android:id="@+id/clearIcon"
+            android:layout_width="40dp"
+            android:layout_height="36dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_clear"
+            android:layout_gravity="end|center_vertical"
+            android:visibility="gone"/>
+
+    </FrameLayout>
+</LinearLayout>
