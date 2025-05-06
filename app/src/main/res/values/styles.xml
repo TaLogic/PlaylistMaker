@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="ButtonMain" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">1</item>
         <item name="android:backgroundTint">@color/YP_white</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/YP_black</item>
@@ -15,8 +12,6 @@
     </style>
     
     <style name="SettingItems">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingHorizontal">@dimen/padding_horizontal</item>
         <item name="android:paddingVertical">@dimen/padding_vertical_settings</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
