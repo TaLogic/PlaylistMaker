@@ -27,18 +27,20 @@ class SettingsActivity : AppCompatActivity() {
         val userAgreement = findViewById<MaterialTextView>(R.id.user_agreement)
 
         shareApp.setOnClickListener {
-            val shareAppIntent = Intent(Intent.ACTION_SEND)
-            shareAppIntent.setType("text/plain")
-            shareAppIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.url_android_developer))
+            val shareAppIntent = Intent(Intent.ACTION_SEND).apply {
+                setType("text/plain")
+                putExtra(Intent.EXTRA_TEXT, getString(R.string.url_android_developer))
+            }
             startActivity(Intent.createChooser(shareAppIntent, ""))
         }
 
         writeToSupport.setOnClickListener {
-            val writeToSupportIntent = Intent(Intent.ACTION_SENDTO)
-            writeToSupportIntent.data = Uri.parse("mailto:")
-            writeToSupportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email_address)))
-            writeToSupportIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject))
-            writeToSupportIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_text))
+            val writeToSupportIntent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email_address)))
+                putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject))
+                putExtra(Intent.EXTRA_TEXT, getString(R.string.email_text))
+            }
             startActivity(writeToSupportIntent)
         }
 

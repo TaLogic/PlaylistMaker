@@ -17,6 +17,8 @@
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         style="@style/SettingItems"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:paddingEnd="@dimen/padding_end_settings"
         android:text="@string/dark_theme"
         app:thumbTint="@color/switch_thumb_color"
@@ -24,18 +26,24 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/share_app"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         style="@style/SettingItems"
         android:drawableEnd="@drawable/ic_share"
         android:text="@string/share_the_app" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/write_to_support"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         style="@style/SettingItems"
         android:drawableEnd="@drawable/ic_support"
         android:text="@string/write_to_support" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/user_agreement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         style="@style/SettingItems"
         android:drawableEnd="@drawable/ic_arrow_forward"
         android:text="@string/user_agreement" />

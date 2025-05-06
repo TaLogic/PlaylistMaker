@@ -6,10 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SearchActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="?attr/colorPrimary">
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbarSearch"
+        android:id="@+id/toolbar_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:navigationIcon="@drawable/ic_back"
@@ -23,7 +24,7 @@
         android:layout_marginHorizontal="@dimen/padding_horizontal">
 
         <EditText
-            android:id="@+id/inputEditText"
+            android:id="@+id/et_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/search"
@@ -37,7 +38,7 @@
             android:textCursorDrawable="@drawable/cursor"/>
 
         <ImageView
-            android:id="@+id/clearIcon"
+            android:id="@+id/btn_clear"
             android:layout_width="40dp"
             android:layout_height="36dp"
             android:scaleType="center"
@@ -46,4 +47,11 @@
             android:visibility="gone"/>
 
     </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_tracks"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/item_track"
+        android:layout_marginTop="16dp" />
 </LinearLayout>

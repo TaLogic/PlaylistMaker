@@ -18,6 +18,9 @@
 
         <Button
             android:id="@+id/search_button"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             style="@style/ButtonMain"
             android:layout_marginTop="40dp"
             android:text="@string/search"
@@ -25,6 +28,9 @@
 
         <Button
             android:id="@+id/media_library_button"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             style="@style/ButtonMain"
             android:layout_marginVertical="4dp"
             android:text="@string/button_media_library"
@@ -32,6 +38,9 @@
 
         <Button
             android:id="@+id/settings_button"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             style="@style/ButtonMain"
             android:text="@string/settings"
             app:icon="@drawable/ic_settings" />
