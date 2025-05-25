@@ -15,14 +15,17 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val trackImage = itemView.findViewById<ImageView>(R.id.track_image)
 
     fun bind(track: Track) {
-        trackName.text = track.trackName
-        artistName.text = track.artistName
-        trackTime.text = track.trackTime
+        trackName.text = track.trackName ?: itemView.context.getString(R.string.unknown_track)
+        artistName.text = track.artistName ?: itemView.context.getString(R.string.unknown_artist)
+        trackTime.text = track.trackTime ?: itemView.context.getString(R.string.unknown_time)
+
+        //dp to px
+        val cornerRadius = itemView.context.resources.getDimensionPixelSize(R.dimen.track_image_corner_radius)
         Glide.with(itemView)
             .load(track.artworkUrl100)
             .placeholder(R.drawable.placeholder)
             .centerCrop()
-            .transform(RoundedCorners(dpToPx(2.0F, itemView.context)))
+            .transform(RoundedCorners(cornerRadius))
             .into(trackImage)
     }
 }
