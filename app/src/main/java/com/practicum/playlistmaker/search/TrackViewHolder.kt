@@ -1,12 +1,14 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.search
 
-import android.view.RoundedCorner
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.R
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val trackName = itemView.findViewById<TextView>(R.id.track_name)
@@ -15,9 +17,12 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val trackImage = itemView.findViewById<ImageView>(R.id.track_image)
 
     fun bind(track: Track) {
-        trackName.text = track.trackName ?: itemView.context.getString(R.string.unknown_track)
-        artistName.text = track.artistName ?: itemView.context.getString(R.string.unknown_artist)
-        trackTime.text = track.trackTime ?: itemView.context.getString(R.string.unknown_time)
+        artistName.text = "" // Сброс для правильной ширины после повторного использования ViewHolder (исправляет баг с layout_weight)
+
+        trackName.text = track.trackName.trim() ?: itemView.context.getString(R.string.unknown_track)
+        artistName.text = track.artistName.trim() ?: itemView.context.getString(R.string.unknown_artist)
+        //trackTime.text = track.trackTime.toString() ?: itemView.context.getString(R.string.unknown_time)
+        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime) ?: itemView.context.getString(R.string.unknown_time)
 
         //dp to px
         val cornerRadius = itemView.context.resources.getDimensionPixelSize(R.dimen.track_image_corner_radius)

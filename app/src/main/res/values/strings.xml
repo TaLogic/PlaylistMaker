@@ -16,4 +16,7 @@
     <string name="unknown_artist">Неизвестный исполнитель</string>
     <string name="unknown_track">Неизвестный трек</string>
     <string name="unknown_time">00:00</string>
+    <string name="update">Обновить</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="connection_problems">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
 </resources>
