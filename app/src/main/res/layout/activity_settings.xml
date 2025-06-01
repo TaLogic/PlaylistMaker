@@ -16,7 +16,6 @@
         app:navigationIcon="@drawable/ic_back" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/themeSwitcher"
         style="@style/SettingItems"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

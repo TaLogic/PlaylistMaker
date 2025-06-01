@@ -17,7 +17,7 @@
         android:textColor="?attr/colorOnSecondary" />
 
         <Button
-            android:id="@+id/btn_search"
+            android:id="@+id/search_button"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -27,7 +27,7 @@
             app:icon="@drawable/ic_search" />
 
         <Button
-            android:id="@+id/btn_media_library"
+            android:id="@+id/media_library_button"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -37,7 +37,7 @@
             app:icon="@drawable/ic_media_library" />
 
         <Button
-            android:id="@+id/btn_settings"
+            android:id="@+id/settings_button"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
