@@ -1,8 +1,9 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.playlistmaker.R
 
 class TrackAdapter(private val trackList: List<Track>) : RecyclerView.Adapter<TrackViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {

@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity"
+    tools:context=".search.SearchActivity"
     android:orientation="vertical"
     android:background="?attr/colorPrimary">
 
@@ -35,7 +35,9 @@
             android:textColor="?attr/colorSearchText"
             android:textColorHint="?attr/colorSearchHint"
             android:background="@drawable/bg_edittext"
-            android:textCursorDrawable="@drawable/cursor"/>
+            android:textCursorDrawable="@drawable/cursor"
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
 
         <ImageView
             android:id="@+id/btn_clear"
@@ -48,10 +50,45 @@
 
     </FrameLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_tracks"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/item_track"
-        android:layout_marginTop="16dp" />
+        android:layout_height="match_parent">
+        
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_tracks"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/item_track"
+            android:layout_marginTop="16dp" />
+        
+        <ImageView
+            android:id="@+id/iv_error"
+            android:layout_width="@dimen/error_image_size"
+            android:layout_height="@dimen/error_image_size"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="110dp"/>
+
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            style="@style/YS.Text.Medium.19"
+            android:layout_marginTop="246dp"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnPrimary"/>
+
+        <Button
+            android:id="@+id/btn_update"
+            style="@style/ButtonUpdate"
+            android:layout_width="92dp"
+            android:layout_height="36dp"
+            android:text="@string/update"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="358dp"
+            android:visibility="gone"/>
+    </FrameLayout>
+
+
 </LinearLayout>
