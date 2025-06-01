@@ -18,7 +18,7 @@
         <item name="android:textAppearance">@style/YS.Text.Regular.16</item>
     </style>
 
-    <style name="ButtonUpdate">
+    <style name="ButtonSecondary">
         <item name="android:background">@drawable/btn_update_background</item>
         <item name="backgroundTint">?attr/colorOnPrimary</item>
         <item name="android:textColor">?attr/colorPrimary</item>
