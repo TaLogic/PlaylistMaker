@@ -2,7 +2,6 @@ package com.practicum.playlistmaker
 
 import android.app.Activity
 import android.content.Context
-import android.util.TypedValue
 import android.view.inputmethod.InputMethodManager
 
 fun Activity.hideKeyboard() {

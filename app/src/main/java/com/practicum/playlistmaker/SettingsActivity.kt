@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 
 class SettingsActivity : AppCompatActivity() {
@@ -16,13 +18,21 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        //Завершение активити по кнопке назад
+        finishActivity()
+        shareApp()
+        writeToSupport()
+        openUserAgreement()
+        setupThemeSwitcher()
+    }
+
+    private fun finishActivity() {
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         toolbar.setNavigationOnClickListener {
             finish()
         }
+    }
 
-        //Поделиться приложением
+    private fun shareApp() {
         val shareApp = findViewById<MaterialTextView>(R.id.share_app)
         shareApp.setOnClickListener {
             val shareAppIntent = Intent(Intent.ACTION_SEND).apply {
@@ -31,8 +41,9 @@ class SettingsActivity : AppCompatActivity() {
             }
             startActivity(Intent.createChooser(shareAppIntent, ""))
         }
+    }
 
-        //Написать в поддержку
+    private fun writeToSupport() {
         val writeToSupport = findViewById<MaterialTextView>(R.id.write_to_support)
         writeToSupport.setOnClickListener {
             val writeToSupportIntent = Intent(Intent.ACTION_SENDTO).apply {
@@ -43,13 +54,23 @@ class SettingsActivity : AppCompatActivity() {
             }
             startActivity(writeToSupportIntent)
         }
+    }
 
-        //Открыть пользовательское соглашение
+    private fun openUserAgreement() {
         val userAgreement = findViewById<MaterialTextView>(R.id.user_agreement)
         userAgreement.setOnClickListener {
             val userAgreementIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_user_agreement)))
             startActivity(userAgreementIntent)
         }
+    }
 
+    private fun setupThemeSwitcher() {
+        val app = applicationContext as App
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+        themeSwitcher.setOnCheckedChangeListener { switcher, isChecked ->
+            app.switchTheme(isChecked)
+        }
+
+        themeSwitcher.isChecked = app.darkTheme
     }
 }
