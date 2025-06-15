@@ -9,10 +9,12 @@
     <dimen name="padding_start_settings">16dp</dimen>
     <dimen name="padding_end_settings">12dp</dimen>
     <dimen name="image_size_settings">24dp</dimen>
-    <dimen name="button_size_settings">48dp</dimen>
+    <dimen name="button_back_size">48dp</dimen>
     <dimen name="image_size">45dp</dimen>
     <dimen name="icon_size">24dp</dimen>
     <dimen name="track_image_corner_radius">2dp</dimen>
     <dimen name="error_image_size">120dp</dimen>
     <dimen name="button_update_corner_radius">54dp</dimen>
+    <dimen name="button_audio_player_size">51dp</dimen>
+    <dimen name="big_track_image_corner_radius">8dp</dimen>
 </resources>

@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.search
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
@@ -15,7 +16,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.gson.GsonBuilder
 import com.practicum.playlistmaker.App
+import com.practicum.playlistmaker.AudioPlayerActivity
 import com.practicum.playlistmaker.search.iTunes.ITunesApi
 import com.practicum.playlistmaker.search.iTunes.ITunesResponse
 import com.practicum.playlistmaker.R
@@ -45,10 +48,14 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var trackHistoryRecyclerView: RecyclerView
     private lateinit var clearHistoryButton: Button
 
+    private val gson = GsonBuilder()
+        .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .create()
+
     private val iTunesBaseUrl = "https://itunes.apple.com"
     private val retrofit = Retrofit.Builder()
         .baseUrl(iTunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
     private val itunesApiService = retrofit.create(ITunesApi::class.java)
 
@@ -99,11 +106,11 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupAdapters() {
-        trackAdapter = TrackAdapter(trackList) { addTrackToHistory(it) }
+        trackAdapter = TrackAdapter(trackList) { onTrackSelected(it) }
         trackRecyclerView.adapter = trackAdapter
         trackRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        historyTrackAdapter = TrackAdapter(historyTrackList) { addTrackToHistory(it) }
+        historyTrackAdapter = TrackAdapter(historyTrackList) { onTrackSelected(it) }
         trackHistoryRecyclerView.adapter = historyTrackAdapter
         trackHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
     }
@@ -252,6 +259,17 @@ class SearchActivity : AppCompatActivity() {
                 addTrackAndNotifyAdapter(track)
             }
         }
+    }
+
+    private fun openAudioPlayer(track: Track) {
+        val intent = Intent(this, AudioPlayerActivity::class.java)
+        intent.putExtra("track", track)
+        startActivity(intent)
+    }
+
+    private fun onTrackSelected(track: Track) {
+        addTrackToHistory(track)
+        openAudioPlayer(track)
     }
 
     private fun notifyAdapterItemRemoved(position: Int) {

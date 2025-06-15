@@ -10,3 +10,7 @@ fun Activity.hideKeyboard() {
         imm?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
+
+fun Int.dxToPx(context: Context): Int {
+    return context.resources.getDimensionPixelSize(this)
+}
