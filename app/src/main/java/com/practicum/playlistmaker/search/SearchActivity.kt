@@ -3,6 +3,8 @@ package com.practicum.playlistmaker.search
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.EditorInfo
@@ -10,6 +12,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -47,6 +50,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var trackRecyclerView: RecyclerView
     private lateinit var trackHistoryRecyclerView: RecyclerView
     private lateinit var clearHistoryButton: Button
+    private lateinit var progressBar: ProgressBar
+    private lateinit var errorContainer: LinearLayout
 
     private val gson = GsonBuilder()
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
@@ -58,6 +63,9 @@ class SearchActivity : AppCompatActivity() {
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
     private val itunesApiService = retrofit.create(ITunesApi::class.java)
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { searchTracks() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,6 +104,8 @@ class SearchActivity : AppCompatActivity() {
         clearSearchButton = findViewById(R.id.btn_clear)
         trackRecyclerView = findViewById(R.id.rv_tracks)
         trackHistoryRecyclerView = findViewById(R.id.rv_history_tracks)
+        progressBar = findViewById(R.id.progressBar)
+        errorContainer = findViewById(R.id.error_container)
     }
 
     private fun finishActivity() {
@@ -127,6 +137,7 @@ class SearchActivity : AppCompatActivity() {
             searchInput.setText("")
             hideKeyboard()
             clearTrackResults()
+            errorContainer.isVisible = false
         }
     }
 
@@ -141,6 +152,9 @@ class SearchActivity : AppCompatActivity() {
 
                 searchHistoryContainer.isVisible = searchInput.hasFocus() && searchInput.text.isEmpty() && historyTrackList.isNotEmpty()
                 trackRecyclerView.isVisible = !searchHistoryContainer.isVisible
+
+                if (currentQuery.isNotEmpty())
+                    searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -180,6 +194,10 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchTracks() {
+        // Меняем видимость элементов перед выполнением запроса
+        errorContainer.isVisible = false
+        progressBar.isVisible = true
+
         val query = searchInput.text.toString()
         itunesApiService.search(query)
             .enqueue(object : Callback<ITunesResponse> {
@@ -187,6 +205,8 @@ class SearchActivity : AppCompatActivity() {
                     call: Call<ITunesResponse>,
                     response: Response<ITunesResponse>
                 ) {
+                    errorContainer.isVisible = true
+                    progressBar.isVisible = false
                     when (response.code()) {
                         200 -> {
                             if (response.body()?.results?.isNotEmpty() == true) {
@@ -211,6 +231,8 @@ class SearchActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<ITunesResponse>, t: Throwable) {
+                    errorContainer.isVisible = true
+                    progressBar.isVisible = false
                     showMessage(
                         getString(R.string.connection_problems),
                         getDrawable(R.drawable.network_error),
@@ -224,6 +246,7 @@ class SearchActivity : AppCompatActivity() {
         image: Drawable? = null,
         showRetryButton: Boolean = false
     ) {
+        errorTextView.isVisible = message.isNotEmpty()
         errorImageView.isVisible = message.isNotEmpty()
         errorTextView.text = message
         if (message.isNotEmpty()) {
@@ -263,7 +286,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun openAudioPlayer(track: Track) {
         val intent = Intent(this, AudioPlayerActivity::class.java)
-        intent.putExtra("track", track)
+        intent.putExtra(AudioPlayerActivity.KEY_TRACK,track)
         startActivity(intent)
     }
 
@@ -282,8 +305,14 @@ class SearchActivity : AppCompatActivity() {
         historyTrackAdapter.notifyItemInserted(0)
     }
 
+    private fun searchDebounce() {
+        handler.removeCallbacks (searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
     companion object {
         const val KEY_QUERY = "SEARCH_QUERY"
         const val DEFAULT_QUERY = ""
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 }

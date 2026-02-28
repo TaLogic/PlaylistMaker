@@ -91,7 +91,7 @@
                 android:layout_marginBottom="28dp"
                 android:layout_gravity="center_horizontal"/>
         </LinearLayout>
-        
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_tracks"
             android:layout_width="match_parent"
@@ -99,13 +99,21 @@
             tools:listitem="@layout/item_track"
             android:layout_marginTop="16dp"
             android:visibility="gone"/>
-        
+
+        <LinearLayout
+            android:id="@+id/error_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
         <ImageView
             android:id="@+id/iv_error"
             android:layout_width="@dimen/error_image_size"
             android:layout_height="@dimen/error_image_size"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="110dp"/>
+            android:layout_marginTop="110dp"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/error_text"
@@ -113,7 +121,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
             style="@style/YS.Text.Medium.19"
-            android:layout_marginTop="246dp"
+            android:layout_marginTop="16dp"
             android:layout_gravity="center_horizontal"
             android:textAlignment="center"
             android:textColor="?attr/colorOnPrimary"/>
@@ -125,9 +133,18 @@
             android:layout_height="36dp"
             android:text="@string/update"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="358dp"
+            android:layout_marginTop="24dp"
+            android:visibility="gone"/>
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="148dp"
+            android:indeterminateTint="@color/YP_blue"
             android:visibility="gone"/>
     </FrameLayout>
-
 
 </LinearLayout>

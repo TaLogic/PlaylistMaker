@@ -19,9 +19,8 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(track: Track) {
         artistName.text = "" // Сброс для правильной ширины после повторного использования ViewHolder (исправляет баг с layout_weight)
 
-        trackName.text = track.trackName.trim() ?: itemView.context.getString(R.string.unknown_track)
-        artistName.text = track.artistName.trim() ?: itemView.context.getString(R.string.unknown_artist)
-        //trackTime.text = track.trackTime.toString() ?: itemView.context.getString(R.string.unknown_time)
+        trackName.text = track.trackName ?: itemView.context.getString(R.string.unknown_track)
+        artistName.text = track.artistName ?: itemView.context.getString(R.string.unknown_artist)
         trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime) ?: itemView.context.getString(R.string.unknown_time)
 
         //dp to px
