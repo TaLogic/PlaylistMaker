@@ -1,19 +1,22 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui.audioplayer
 
-import android.content.Intent
-import android.media.MediaPlayer
-import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.Parcelable
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.practicum.playlistmaker.search.Track
+import com.practicum.playlistmaker.Creator
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.model.Track
+import com.practicum.playlistmaker.domain.player.AudioPlayerInteractor
+import com.practicum.playlistmaker.domain.player.PlaybackListener
+import com.practicum.playlistmaker.dxToPx
+import com.practicum.playlistmaker.formatDuration
+import com.practicum.playlistmaker.parcelable
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -31,14 +34,15 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var trackYear: TextView
     private lateinit var trackGenre: TextView
     private lateinit var trackCountry: TextView
-    private var mediaPlayer = MediaPlayer()
-    private var playerState = STATE_DEFAULT
     private var track: Track? = null
 
     private val handler = Handler(Looper.getMainLooper())
     private val updateTimerRunnable = Runnable {
         updateTimer()
     }
+
+    lateinit var audioPlayerInteractor: AudioPlayerInteractor
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,16 +51,17 @@ class AudioPlayerActivity : AppCompatActivity() {
         bindTrackFromIntent()
         finishActivity()
         initPlayer()
+        initPlaybackListener()
     }
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        audioPlayerInteractor.pauseTrack()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
+        audioPlayerInteractor.releasePlayer()
         handler.removeCallbacks(updateTimerRunnable)
     }
 
@@ -77,6 +82,8 @@ class AudioPlayerActivity : AppCompatActivity() {
         trackCountry = findViewById(R.id.name_of_country)
 
         track = intent.parcelable<Track>(KEY_TRACK)
+
+        audioPlayerInteractor = Creator.provideAudioPlayerInteractor()
     }
 
     private fun finishActivity() {
@@ -99,7 +106,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         trackName.text = currentTrack.trackName ?: getString(R.string.unknown_track)
         artistName.text = currentTrack.artistName ?: getString(R.string.unknown_artist)
-        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentTrack.trackTime) ?: getString(R.string.unknown_time)
+        trackTime.text = currentTrack.trackTime?.let { SimpleDateFormat("mm:ss", Locale.getDefault()).format(it) } ?: getString(R.string.unknown_time)
         trackAlbum.text = currentTrack.collectionName ?: getString(R.string.unknown_album)
         trackYear.text = getYearFromReleaseDate(currentTrack.releaseDate)
         trackGenre.text = currentTrack.primaryGenreName ?: getString(R.string.unknown_genre)
@@ -124,65 +131,38 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun preparePlayer() {
-        val currentTrack = track
-        if (currentTrack != null) {
-            mediaPlayer.setDataSource(currentTrack.previewUrl)
-            mediaPlayer.prepareAsync()
-            mediaPlayer.setOnPreparedListener {
-                playerState = STATE_PREPARED
-            }
-            mediaPlayer.setOnCompletionListener {
+    private fun initPlaybackListener() {
+        audioPlayerInteractor.setPlaybackListener(object : PlaybackListener {
+            override fun onCompleted() {
                 playButton.setImageResource(R.drawable.btn_play)
-                playerState = STATE_PREPARED
                 handler.removeCallbacks (updateTimerRunnable)
                 currentTime.text = getString(R.string.zero_time)
             }
-        }
-    }
 
-    private fun startPlayer() {
-        mediaPlayer.start()
-        playButton.setImageResource(R.drawable.btn_pause)
-        playerState = STATE_PLAYING
-        updateTimer()
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        playButton.setImageResource(R.drawable.btn_play)
-        playerState = STATE_PAUSED
-        handler.removeCallbacks(updateTimerRunnable)
-    }
-
-    private fun playbackControl() {
-        when(playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
+            override fun onPlay() {
+                playButton.setImageResource(R.drawable.btn_pause)
+                updateTimer()
             }
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
+
+            override fun onPause() {
+                playButton.setImageResource(R.drawable.btn_play)
+                handler.removeCallbacks(updateTimerRunnable)
             }
-        }
+        })
     }
 
     private fun initPlayer() {
-        preparePlayer()
-        playButton.setOnClickListener { playbackControl() }
+        track?.let { audioPlayerInteractor.preparePlayer(it.previewUrl ) }
+        playButton.setOnClickListener { audioPlayerInteractor.playbackControl()  }
     }
 
     private fun updateTimer() {
-        currentTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+        currentTime.text = formatDuration(audioPlayerInteractor.getCurrentPosition())
         handler.postDelayed(updateTimerRunnable, TIMER_UPDATE_DELAY)
     }
 
     companion object {
         const val KEY_TRACK = "track"
-
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
 
         private const val TIMER_UPDATE_DELAY = 300L
     }

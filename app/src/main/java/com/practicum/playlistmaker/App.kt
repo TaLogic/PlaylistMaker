@@ -1,32 +1,23 @@
 package com.practicum.playlistmaker
 
 import android.app.Application
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
+import com.practicum.playlistmaker.domain.interactor.SettingInteractor
 
 class App : Application() {
-
-    var darkTheme = false
-    private lateinit var userPrefs: SharedPreferences
-    private lateinit var searchPrefs: SharedPreferences
+    lateinit var settingInteractor: SettingInteractor
 
     override fun onCreate() {
         super.onCreate()
-        userPrefs = getSharedPreferences(USER_PREFERENCES, MODE_PRIVATE)
-        darkTheme = userPrefs.getBoolean(THEME_KEY, false)
-        switchTheme(darkTheme)
+        Creator.initApplication(this)
+        settingInteractor = Creator.provideSettingInteractor()
 
-        searchPrefs = getSharedPreferences(SEARCH_PREFERENCES, MODE_PRIVATE)
-
+        applyTheme( settingInteractor.darkTheme)
     }
 
-    fun switchTheme(darkThemeEnabled: Boolean) {
-        darkTheme = darkThemeEnabled
-        userPrefs.edit()
-            .putBoolean(THEME_KEY, darkTheme)
-            .apply()
+    fun applyTheme(isDark: Boolean) {
         AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
+            if (isDark) {
                 AppCompatDelegate.MODE_NIGHT_YES
             } else {
                 AppCompatDelegate.MODE_NIGHT_NO
@@ -34,11 +25,13 @@ class App : Application() {
         )
     }
 
-    fun getSearchPrefs(): SharedPreferences = searchPrefs
+        fun switchTheme(isDark: Boolean) {
+        settingInteractor.darkTheme = isDark
+        applyTheme(isDark)
+    }
 
     companion object {
         const val USER_PREFERENCES = "user_preferences"
-        const val THEME_KEY = "theme_key"
         const val SEARCH_PREFERENCES = "search_history_preferences"
     }
 }
