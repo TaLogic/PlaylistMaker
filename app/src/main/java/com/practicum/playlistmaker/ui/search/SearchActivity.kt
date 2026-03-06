@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.search
+package com.practicum.playlistmaker.ui.search
 
 import android.content.Intent
 import android.graphics.drawable.Drawable
@@ -19,18 +19,15 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.gson.GsonBuilder
-import com.practicum.playlistmaker.App
-import com.practicum.playlistmaker.AudioPlayerActivity
-import com.practicum.playlistmaker.search.iTunes.ITunesApi
-import com.practicum.playlistmaker.search.iTunes.ITunesResponse
+import com.practicum.playlistmaker.Creator
+import com.practicum.playlistmaker.ui.audioplayer.AudioPlayerActivity
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.hideKeyboard
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.practicum.playlistmaker.domain.TracksResult
+import com.practicum.playlistmaker.domain.interactor.SearchHistoryInteractor
+import com.practicum.playlistmaker.domain.interactor.TracksInteractor
+import com.practicum.playlistmaker.domain.model.Track
+import com.practicum.playlistmaker.ui.tracks.TracksAdapter
 
 class SearchActivity : AppCompatActivity() {
 
@@ -43,9 +40,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var errorImageView: ImageView
     private lateinit var retrySearchButton: Button
     private lateinit var clearSearchButton: ImageView
-    private lateinit var trackAdapter: TrackAdapter
-    private lateinit var historyTrackAdapter: TrackAdapter
-    private lateinit var searchHistory: SearchHistory
+    private lateinit var tracksAdapter: TracksAdapter
+    private lateinit var historyTracksAdapter: TracksAdapter
     private lateinit var searchHistoryContainer: LinearLayout
     private lateinit var trackRecyclerView: RecyclerView
     private lateinit var trackHistoryRecyclerView: RecyclerView
@@ -53,16 +49,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var errorContainer: LinearLayout
 
-    private val gson = GsonBuilder()
-        .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .create()
-
-    private val iTunesBaseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(iTunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .build()
-    private val itunesApiService = retrofit.create(ITunesApi::class.java)
+    private lateinit var tracksInteractor: TracksInteractor
+    private lateinit var searchHistoryInteractor: SearchHistoryInteractor
 
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { searchTracks() }
@@ -80,7 +68,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        searchHistory.saveHistoryTracks(historyTrackList)
+        searchHistoryInteractor.saveHistoryTracks(historyTrackList)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -106,6 +94,9 @@ class SearchActivity : AppCompatActivity() {
         trackHistoryRecyclerView = findViewById(R.id.rv_history_tracks)
         progressBar = findViewById(R.id.progressBar)
         errorContainer = findViewById(R.id.error_container)
+
+        tracksInteractor = Creator.provideTracksInteractor()
+        searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
     }
 
     private fun finishActivity() {
@@ -116,12 +107,12 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupAdapters() {
-        trackAdapter = TrackAdapter(trackList) { onTrackSelected(it) }
-        trackRecyclerView.adapter = trackAdapter
+        tracksAdapter = TracksAdapter(trackList) { onTrackSelected(it) }
+        trackRecyclerView.adapter = tracksAdapter
         trackRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        historyTrackAdapter = TrackAdapter(historyTrackList) { onTrackSelected(it) }
-        trackHistoryRecyclerView.adapter = historyTrackAdapter
+        historyTracksAdapter = TracksAdapter(historyTrackList) { onTrackSelected(it) }
+        trackHistoryRecyclerView.adapter = historyTracksAdapter
         trackHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
     }
 
@@ -150,7 +141,7 @@ class SearchActivity : AppCompatActivity() {
                 clearSearchButton.isVisible = !s.isNullOrEmpty()
                 currentQuery = s.toString()
 
-                searchHistoryContainer.isVisible = searchInput.hasFocus() && searchInput.text.isEmpty() && historyTrackList.isNotEmpty()
+                searchHistoryContainer.isVisible = searchInput.hasFocus() && searchInput.text.isBlank() && historyTrackList.isNotEmpty()
                 trackRecyclerView.isVisible = !searchHistoryContainer.isVisible
 
                 if (currentQuery.isNotEmpty())
@@ -180,17 +171,15 @@ class SearchActivity : AppCompatActivity() {
 
     private fun setupClearHistoryButton() {
         clearHistoryButton.setOnClickListener {
-            searchHistory.clearSearchHistory()
+            searchHistoryInteractor.clearSearchHistory()
             historyTrackList.clear()
-            historyTrackAdapter.notifyDataSetChanged()
+            historyTracksAdapter.notifyDataSetChanged()
             searchHistoryContainer.isVisible = false
         }
     }
 
     private fun loadSearchHistory() {
-        val app = applicationContext as App
-        searchHistory = SearchHistory(app.getSearchPrefs())
-        historyTrackList = searchHistory.getHistoryTracks()
+        historyTrackList = ArrayList(searchHistoryInteractor.getHistoryTracks())
     }
 
     private fun searchTracks() {
@@ -199,46 +188,36 @@ class SearchActivity : AppCompatActivity() {
         progressBar.isVisible = true
 
         val query = searchInput.text.toString()
-        itunesApiService.search(query)
-            .enqueue(object : Callback<ITunesResponse> {
-                override fun onResponse(
-                    call: Call<ITunesResponse>,
-                    response: Response<ITunesResponse>
-                ) {
+        tracksInteractor.searchTracks(query, object : TracksInteractor.TracksConsumer {
+            override fun consume(result: TracksResult) {
+                runOnUiThread {
                     errorContainer.isVisible = true
                     progressBar.isVisible = false
-                    when (response.code()) {
-                        200 -> {
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                trackList.clear()
-                                trackList.addAll(response.body()?.results!!)
-                                trackAdapter.notifyDataSetChanged()
-                                showMessage("")
-                            } else {
-                                showMessage(
-                                    getString(R.string.nothing_found),
-                                    getDrawable(R.drawable.nothing_found))
-                            }
-                        }
-                        else -> {
-                            showMessage(
-                                getString(R.string.connection_problems),
-                                getDrawable(R.drawable.network_error),
-                                showRetryButton = true)
 
+                    when(result) {
+                        is TracksResult.Success -> {
+                            trackList.clear()
+                            trackList.addAll(result.tracks)
+                            tracksAdapter.notifyDataSetChanged()
+                            showMessage("")
                         }
+                        is TracksResult.Empty -> showMessage(
+                            getString(R.string.nothing_found),
+                            getDrawable(R.drawable.nothing_found))
+                        is TracksResult.NetworkError ->  showMessage(
+                            getString(R.string.connection_problems),
+                            getDrawable(R.drawable.network_error),
+                            showRetryButton = true)
+                        is TracksResult.ServerError ->  showMessage(
+                            getString(R.string.connection_problems),
+                            getDrawable(R.drawable.network_error),
+                            showRetryButton = true)
+                        is TracksResult.EmptyQuery -> showMessage("")
+
                     }
                 }
-
-                override fun onFailure(call: Call<ITunesResponse>, t: Throwable) {
-                    errorContainer.isVisible = true
-                    progressBar.isVisible = false
-                    showMessage(
-                        getString(R.string.connection_problems),
-                        getDrawable(R.drawable.network_error),
-                        showRetryButton = true)
-                }
-            })
+            }
+        })
     }
 
     private fun showMessage(
@@ -261,7 +240,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun clearTrackResults() {
         trackList.clear()
-        trackAdapter.notifyDataSetChanged()
+        tracksAdapter.notifyDataSetChanged()
     }
 
     private fun addTrackToHistory(track: Track) {
@@ -296,13 +275,13 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun notifyAdapterItemRemoved(position: Int) {
-        historyTrackAdapter.notifyItemRemoved(position)
-        historyTrackAdapter.notifyItemRangeChanged(position, historyTrackList.size)
+        historyTracksAdapter.notifyItemRemoved(position)
+        historyTracksAdapter.notifyItemRangeChanged(position, historyTrackList.size)
     }
 
     private fun addTrackAndNotifyAdapter(track: Track) {
         historyTrackList.add(0, track)
-        historyTrackAdapter.notifyItemInserted(0)
+        historyTracksAdapter.notifyItemInserted(0)
     }
 
     private fun searchDebounce() {
