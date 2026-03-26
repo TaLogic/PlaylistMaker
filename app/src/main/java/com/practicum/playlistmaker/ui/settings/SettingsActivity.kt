@@ -1,17 +1,14 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui.settings
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
+import com.practicum.playlistmaker.App
+import com.practicum.playlistmaker.R
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +56,8 @@ class SettingsActivity : AppCompatActivity() {
     private fun openUserAgreement() {
         val userAgreement = findViewById<MaterialTextView>(R.id.user_agreement)
         userAgreement.setOnClickListener {
-            val userAgreementIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_user_agreement)))
+            val userAgreementIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_user_agreement)))
             startActivity(userAgreementIntent)
         }
     }
@@ -67,10 +65,12 @@ class SettingsActivity : AppCompatActivity() {
     private fun setupThemeSwitcher() {
         val app = applicationContext as App
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+
+        themeSwitcher.isChecked = app.settingInteractor.darkTheme
+
         themeSwitcher.setOnCheckedChangeListener { switcher, isChecked ->
             app.switchTheme(isChecked)
         }
 
-        themeSwitcher.isChecked = app.darkTheme
     }
 }

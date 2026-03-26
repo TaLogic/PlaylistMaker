@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.search
+package com.practicum.playlistmaker.ui.tracks
 
 import android.view.View
 import android.widget.ImageView
@@ -7,10 +7,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.model.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class TracksViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val trackName = itemView.findViewById<TextView>(R.id.track_name)
     private val artistName = itemView.findViewById<TextView>(R.id.artist_name)
     private val trackTime = itemView.findViewById<TextView>(R.id.track_time)
@@ -21,7 +22,8 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         trackName.text = track.trackName ?: itemView.context.getString(R.string.unknown_track)
         artistName.text = track.artistName ?: itemView.context.getString(R.string.unknown_artist)
-        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime) ?: itemView.context.getString(R.string.unknown_time)
+        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime) ?: itemView.context.getString(
+            R.string.unknown_time)
 
         //dp to px
         val cornerRadius = itemView.context.resources.getDimensionPixelSize(R.dimen.track_image_corner_radius)

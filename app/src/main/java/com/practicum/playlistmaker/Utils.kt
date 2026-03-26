@@ -18,6 +18,13 @@ fun Int.dxToPx(context: Context): Int {
     return context.resources.getDimensionPixelSize(this)
 }
 
+fun formatDuration(milliseconds: Int): String {
+    val secondsAmount = milliseconds / 1000
+    val minutes = secondsAmount / 60
+    val seconds = secondsAmount % 60
+    return String.format("%02d:%02d", minutes, seconds)
+}
+
 inline fun <reified T : Parcelable> Intent.parcelable(key: String): T? = when {
     SDK_INT >= 33 -> getParcelableExtra(key, T::class.java)
     else -> @Suppress("DEPRECATION") getParcelableExtra(key) as? T
