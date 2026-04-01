@@ -1,33 +1,18 @@
 package com.practicum.playlistmaker
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
-import com.practicum.playlistmaker.domain.interactor.SettingInteractor
+import com.practicum.playlistmaker.creator.Creator
+import com.practicum.playlistmaker.settings.domain.SettingsInteractor
 
 class App : Application() {
-    lateinit var settingInteractor: SettingInteractor
+    lateinit var settingsInteractor: SettingsInteractor
 
     override fun onCreate() {
         super.onCreate()
         Creator.initApplication(this)
-        settingInteractor = Creator.provideSettingInteractor()
-
-        applyTheme( settingInteractor.darkTheme)
-    }
-
-    fun applyTheme(isDark: Boolean) {
-        AppCompatDelegate.setDefaultNightMode(
-            if (isDark) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
-    }
-
-        fun switchTheme(isDark: Boolean) {
-        settingInteractor.darkTheme = isDark
-        applyTheme(isDark)
+        settingsInteractor = Creator.provideSettingInteractor()
+        val isDark = settingsInteractor.isDarkThemeEnabled()
+        settingsInteractor.updateThemeSetting(isDark)
     }
 
     companion object {

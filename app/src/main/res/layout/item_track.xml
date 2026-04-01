@@ -7,7 +7,7 @@
     android:paddingHorizontal="12dp">
     
     <ImageView
-        android:id="@+id/track_image"
+        android:id="@+id/trackImage"
         android:layout_width="@dimen/image_size"
         android:layout_height="@dimen/image_size"
         android:src="@drawable/placeholder"/>
