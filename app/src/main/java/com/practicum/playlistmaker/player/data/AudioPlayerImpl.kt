@@ -3,11 +3,12 @@ package com.practicum.playlistmaker.player.data
 import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
-import com.practicum.playlistmaker.player.domain.repository.AudioPlayer
 import com.practicum.playlistmaker.player.domain.PlayerStateListener
+import com.practicum.playlistmaker.player.domain.repository.AudioPlayer
 
-class AudioPlayerImpl(private val mediaPlayer: MediaPlayer, private val context: Context) : AudioPlayer {
-    private var playerStateListener: PlayerStateListener?= null
+class AudioPlayerImpl(private val mediaPlayer: MediaPlayer, private val context: Context) :
+    AudioPlayer {
+    private var playerStateListener: PlayerStateListener? = null
 
     override fun preparePlayer(urlTrack: String) {
         mediaPlayer.setDataSource(context, Uri.parse(urlTrack))

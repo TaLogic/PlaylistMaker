@@ -112,6 +112,7 @@ class SearchActivity : AppCompatActivity() {
         setupEditorAction()
         setupClearSearchButton()
         setupClearHistoryButton()
+        binding.retrySearchButton.setOnClickListener { searchViewModel.search(currentQuery) }
     }
 
     private fun setupSearchInput() {
@@ -121,11 +122,13 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 currentQuery = s.toString().trim()
                 binding.clearSearchButton.isVisible = s?.isNotEmpty() == true
-                updateSearchVisibility()
 
                 if (currentQuery.isNotEmpty()) {
-                    //tracksAdapter.setTracks(emptyList())
+                    showLoading()
                     searchViewModel.searchDebounce(currentQuery)
+                } else {
+                    showEmptyQuery()
+                    searchViewModel.cancelPendingSearch()
                 }
             }
 

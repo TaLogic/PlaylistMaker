@@ -6,19 +6,20 @@ class SearchHistoryInteractorImpl(private val repository: SearchHistoryRepositor
     SearchHistoryInteractor {
     override fun saveToHistory(track: Track) {
         val historyTracks = ArrayList(repository.getHistoryTracks())
-        if (historyTracks.contains(track)) {
-            historyTracks.remove(track)
-            historyTracks.add(0, track)
-            repository.saveHistoryTracks(historyTracks)
-        } else if (historyTracks.size >= 10) {
-            val lastIndex = historyTracks.lastIndex
-            historyTracks.removeAt(lastIndex)
-            historyTracks.add(0, track)
-            repository.saveHistoryTracks(historyTracks)
-        } else {
-            historyTracks.add(0, track)
-            repository.saveHistoryTracks(historyTracks)
+        when {
+            historyTracks.contains(track) -> {
+                historyTracks.remove(track)
+            }
+
+            historyTracks.size >= 10 -> {
+                val lastIndex = historyTracks.lastIndex
+                historyTracks.removeAt(lastIndex)
+
+            }
         }
+
+        historyTracks.add(0, track)
+        repository.saveHistoryTracks(historyTracks)
     }
 
     override fun getHistoryTracks(): List<Track> {

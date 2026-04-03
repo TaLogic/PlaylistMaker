@@ -12,6 +12,7 @@ import com.practicum.playlistmaker.formatDuration
 import com.practicum.playlistmaker.player.domain.PlaybackListener
 import com.practicum.playlistmaker.player.domain.PlayerState
 import com.practicum.playlistmaker.player.domain.interactor.AudioPlayerInteractor
+import com.practicum.playlistmaker.player.ui.models.AudioPlayerState
 
 class AudioPlayerViewModel(
     private val audioPlayerInteractor: AudioPlayerInteractor,
@@ -37,11 +38,9 @@ class AudioPlayerViewModel(
         initPlaybackListener()
     }
 
-    private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState.DEFAULT)
-    fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
-
-    private val timerLiveData = MutableLiveData<String>("00:00")
-    fun observeTimer(): LiveData<String> = timerLiveData
+    private val audioPlayerStateLiveData =
+        MutableLiveData<AudioPlayerState>(AudioPlayerState(PlayerState.DEFAULT, "00:00"))
+    fun observeState(): LiveData<AudioPlayerState> = audioPlayerStateLiveData
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -55,19 +54,35 @@ class AudioPlayerViewModel(
 
     private fun initPlaybackListener() {
         audioPlayerInteractor.setPlaybackListener(object : PlaybackListener {
-            override fun onCompleted() {
-                playerStateLiveData.postValue(PlayerState.PREPARED)
-                resetTimer()
+
+            override fun onPrepared() {
+                audioPlayerStateLiveData.postValue(
+                    AudioPlayerState(playerState = PlayerState.PREPARED, "00:00")
+                )
             }
 
             override fun onPlay() {
+                audioPlayerStateLiveData.postValue(
+                    audioPlayerStateLiveData.value?.copy(playerState = PlayerState.PLAYING)
+                )
                 updateTimer()
-                playerStateLiveData.postValue(PlayerState.PLAYING)
             }
 
             override fun onPause() {
                 handler.removeCallbacks(updateTimerRunnable)
-                playerStateLiveData.postValue(PlayerState.PAUSED)
+                audioPlayerStateLiveData.postValue(
+                    audioPlayerStateLiveData.value?.copy(playerState = PlayerState.PAUSED)
+                )
+            }
+
+            override fun onCompleted() {
+                handler.removeCallbacks(updateTimerRunnable)
+                audioPlayerStateLiveData.postValue(
+                    AudioPlayerState(
+                        playerState = PlayerState.PREPARED,
+                        currentTime = "00:00"
+                    )
+                )
             }
         })
     }
@@ -77,13 +92,16 @@ class AudioPlayerViewModel(
     }
 
     private fun updateTimer() {
-        timerLiveData.postValue(formatDuration(audioPlayerInteractor.getCurrentPosition().toLong()))
+        val time = formatDuration(audioPlayerInteractor.getCurrentPosition().toLong())
+        audioPlayerStateLiveData.postValue(AudioPlayerState(PlayerState.PLAYING, time))
         handler.postDelayed(updateTimerRunnable, TIMER_UPDATE_DELAY)
     }
 
     private fun resetTimer() {
         handler.removeCallbacks(updateTimerRunnable)
-        timerLiveData.postValue("00:00")
+        audioPlayerStateLiveData.postValue(
+            audioPlayerStateLiveData.value?.copy(currentTime = "00:00")
+        )
     }
 
     override fun onCleared() {

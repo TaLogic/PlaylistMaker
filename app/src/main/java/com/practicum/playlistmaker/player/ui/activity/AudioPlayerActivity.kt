@@ -61,16 +61,12 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.observeTimer().observe(this) {
-            binding.currentTime.text = it
-        }
-
-        viewModel.observePlayerState().observe(this) {
-            if (it == PlayerState.PLAYING) {
-                binding.playButton.setImageResource(R.drawable.btn_pause)
-            } else binding.playButton.setImageResource(
-                R.drawable.btn_play
-            )
+        viewModel.observeState().observe(this) {
+            binding.currentTime.text = it.currentTime
+            when (it.playerState) {
+                PlayerState.PLAYING -> binding.playButton.setImageResource(R.drawable.btn_pause)
+                else -> binding.playButton.setImageResource(R.drawable.btn_play)
+            }
         }
     }
 

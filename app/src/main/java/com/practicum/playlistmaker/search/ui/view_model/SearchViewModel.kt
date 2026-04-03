@@ -13,11 +13,8 @@ import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.TracksResult
 import com.practicum.playlistmaker.search.domain.interactor.TracksInteractor
 import com.practicum.playlistmaker.search.domain.search_history.SearchHistoryInteractor
-import com.practicum.playlistmaker.search.ui.SingleLiveEvent
-import com.practicum.playlistmaker.search.ui.activity.SearchActivity
 import com.practicum.playlistmaker.search.ui.models.ErrorType
 import com.practicum.playlistmaker.search.ui.models.SearchState
-import kotlinx.coroutines.Runnable
 
 class SearchViewModel(private val tracksInteractor: TracksInteractor, private val searchHistoryInteractor: SearchHistoryInteractor) : ViewModel() {
 
@@ -106,5 +103,10 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor, private va
     fun clearTrackHistory() {
         searchHistoryInteractor.clearSearchHistory()
         historyTracksLiveData.postValue(emptyList())
+    }
+
+    fun cancelPendingSearch() {
+        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+        latestSearchText = ""
     }
 }

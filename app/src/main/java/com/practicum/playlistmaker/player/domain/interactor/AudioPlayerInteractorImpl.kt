@@ -15,6 +15,7 @@ class AudioPlayerInteractorImpl(private val audioPlayer: AudioPlayer) : AudioPla
     private val playerStateListener = object : PlayerStateListener {
         override fun onPrepared() {
             // Событие от MediaPlayer: трек готов к воспроизведению
+            playbackListener?.onPrepared()
             playerState = PlayerState.PREPARED
         }
 
