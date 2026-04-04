@@ -32,17 +32,10 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor, private va
 
     private var latestSearchText: String? = null
 
-    private val stateLiveData = MutableLiveData<SearchState>()
+    private val stateLiveData = MutableLiveData<SearchState>(SearchState.History(searchHistoryInteractor.getHistoryTracks()))
     fun observeState(): LiveData<SearchState> = stateLiveData
 
-//    private val showToastEvent = SingleLiveEvent<String>()
-//    fun observeShowToast(): LiveData<String> = showToastEvent
-
-    private val historyTracksLiveData = MutableLiveData<List<Track>>(searchHistoryInteractor.getHistoryTracks())
-    fun observeHistoryTracks(): LiveData<List<Track>> = historyTracksLiveData
-
     private val handler = Handler(Looper.getMainLooper())
-
 
     fun searchDebounce(changedText: String) {
         if (latestSearchText == changedText) {
@@ -60,12 +53,13 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor, private va
     }
 
     fun search(text: String) {
+        latestSearchText = text
         searchTracks(text)
     }
 
     private fun searchTracks(newSearchText: String) {
         if (newSearchText.isEmpty()) {
-            renderState(SearchState.NoQuery)
+            renderState(SearchState.History(searchHistoryInteractor.getHistoryTracks()))
         } else {
             renderState(SearchState.Loading)
 
@@ -82,7 +76,7 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor, private va
 
                             is TracksResult.ServerError -> renderState(SearchState.Error(ErrorType.Server))
 
-                            is TracksResult.EmptyQuery -> renderState((SearchState.NoQuery))
+                            is TracksResult.EmptyQuery -> renderState(SearchState.History(searchHistoryInteractor.getHistoryTracks()))
 
                         }
                     }
@@ -97,12 +91,16 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor, private va
 
     fun saveToHistory(track: Track) {
         searchHistoryInteractor.saveToHistory(track)
-        historyTracksLiveData.postValue(searchHistoryInteractor.getHistoryTracks())
+        renderState(SearchState.History(searchHistoryInteractor.getHistoryTracks()))
     }
 
     fun clearTrackHistory() {
         searchHistoryInteractor.clearSearchHistory()
-        historyTracksLiveData.postValue(emptyList())
+        renderState(SearchState.History(emptyList()))
+    }
+
+    fun showHistory() {
+        renderState(SearchState.History(searchHistoryInteractor.getHistoryTracks()))
     }
 
     fun cancelPendingSearch() {

@@ -12,7 +12,7 @@ sealed interface SearchState {
 
     data class Content(val tracks: List<Track>) : SearchState
 
-    object NoQuery : SearchState
+    data class History(val tracks: List<Track>) : SearchState
 }
 
 sealed interface ErrorType {

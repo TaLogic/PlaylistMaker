@@ -5,11 +5,11 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.practicum.playlistmaker.R
@@ -52,7 +52,6 @@ class SearchActivity : AppCompatActivity() {
         initToolbar()
         initListeners()
         observeViewModel()
-        observeHistoryTracks()
     }
 
 
@@ -64,7 +63,6 @@ class SearchActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         currentQuery = savedInstanceState.getString(KEY_QUERY, DEFAULT_QUERY)
-        binding.searchInput.setText(currentQuery)
     }
 
     override fun onDestroy() {
@@ -116,26 +114,19 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupSearchInput() {
-        textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                currentQuery = s.toString().trim()
-                binding.clearSearchButton.isVisible = s?.isNotEmpty() == true
+        textWatcher = binding.searchInput.doOnTextChanged { text, start, before, count ->
+            currentQuery = text?.toString()?.trim() ?: ""
+            binding.clearSearchButton.isVisible = text?.isNotEmpty() == true
 
-                if (currentQuery.isNotEmpty()) {
-                    showLoading()
-                    searchViewModel.searchDebounce(currentQuery)
-                } else {
-                    showEmptyQuery()
-                    searchViewModel.cancelPendingSearch()
-                }
+            if (currentQuery.isNotEmpty()) {
+                searchViewModel.searchDebounce(currentQuery)
+            } else {
+                searchViewModel.showHistory()
+                searchViewModel.cancelPendingSearch()
+                updateSearchVisibility()
             }
-
-            override fun afterTextChanged(s: Editable?) {}
         }
-
-        binding.searchInput.addTextChangedListener(textWatcher)
 
         binding.searchInput.setOnFocusChangeListener { view, hasFocus -> updateSearchVisibility() }
     }
@@ -143,6 +134,7 @@ class SearchActivity : AppCompatActivity() {
     private fun setupEditorAction() {
         binding.searchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                searchViewModel.cancelPendingSearch()
                 searchViewModel.search(currentQuery)
                 hideKeyboard()
                 true
@@ -174,7 +166,9 @@ class SearchActivity : AppCompatActivity() {
                 historyTracksAdapter.itemCount > 0
 
         binding.searchHistoryContainer.isVisible = showHistory
-        binding.trackRecyclerView.isVisible = !showHistory // может убрать
+        binding.trackRecyclerView.isVisible = binding.searchInput.text.isNotEmpty()
+
+        binding.progressBar.isVisible = false
     }
 
     /* ------------------------------ Track Click ------------------------------ */
@@ -187,7 +181,7 @@ class SearchActivity : AppCompatActivity() {
     private fun openAudioPlayer(track: Track) {
         if (clickDebounce()) {
             val intent = Intent(this, AudioPlayerActivity::class.java)
-            intent.putExtra(AudioPlayerActivity.Companion.KEY_TRACK, track)
+            intent.putExtra(AudioPlayerActivity.KEY_TRACK, track)
             startActivity(intent)
         }
     }
@@ -206,7 +200,6 @@ class SearchActivity : AppCompatActivity() {
     private fun render(state: SearchState) {
         when (state) {
             is SearchState.Loading -> showLoading()
-            is SearchState.NoQuery -> showEmptyQuery()
             is SearchState.Error -> {
                 when (state.type) {
                     ErrorType.Network -> showError(
@@ -229,6 +222,7 @@ class SearchActivity : AppCompatActivity() {
             )
 
             is SearchState.Content -> showContent(state.tracks)
+            is SearchState.History -> showHistoryTracks(state.tracks)
         }
     }
 
@@ -274,13 +268,10 @@ class SearchActivity : AppCompatActivity() {
         tracksAdapter.setTracks(trackList)
     }
 
-    private fun showEmptyQuery() {
-        binding.apply {
-            progressBar.isVisible = false
-            errorContainer.isVisible = false
-            updateSearchVisibility()  // searchHistoryContainer.isVisible = true
-            trackRecyclerView.isVisible = false
-        }
+    private fun showHistoryTracks(tracks: List<Track>) {
+        historyTracksAdapter.setTracks(tracks)
+        binding.errorContainer.isVisible = false
+        updateSearchVisibility()
     }
 
     /* ------------------------------ Observers ------------------------------ */
@@ -288,12 +279,6 @@ class SearchActivity : AppCompatActivity() {
     private fun observeViewModel() {
         searchViewModel.observeState().observe(this) {
             render(it)
-        }
-    }
-
-    private fun observeHistoryTracks() {
-        searchViewModel.observeHistoryTracks().observe(this) {
-            historyTracksAdapter.setTracks(it)
         }
     }
 
