@@ -18,7 +18,8 @@ fun Int.dxToPx(context: Context): Int {
     return context.resources.getDimensionPixelSize(this)
 }
 
-fun formatDuration(milliseconds: Int): String {
+fun formatDuration(milliseconds: Long?): String {
+    if (milliseconds == null) return "00:00"
     val secondsAmount = milliseconds / 1000
     val minutes = secondsAmount / 60
     val seconds = secondsAmount % 60
